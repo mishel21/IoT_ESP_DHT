@@ -8,17 +8,17 @@
 #include <EEPROM.h>
 
 // ───── Wi-Fi Credentials ─────
-const char* ssid = "WIFI1";
-const char* password = "dsa54321";
+const char* ssid = "dummy";
+const char* password = "dummy";
 const unsigned long WIFI_RETRY_DELAY_MS = 5000;  // 5 seconds retry
 
 // ───── AWS IoT Configuration ─────
-const char* iotEndpoint = "a1iprve8c3g3fm-ats.iot.us-east-1.amazonaws.com";
+const char* iotEndpoint = "dummy";
 const char* awsMqttTopic = "sensor/dht";
 
 // ───── Telegram Configuration ─────
-const char* telegramBotToken = "8039173850:AAG7fRy73-977Ll4ijIOVnL2Rov9gauSmJo";
-const long telegramChatId = 251752990;
+const char* telegramBotToken = "dummy";
+const long telegramChatId = dummy;
 const char* telegramHost = "api.telegram.org";
 WiFiClientSecure telegramClient;  // for Telegram HTTPS
 
@@ -34,77 +34,19 @@ unsigned long readingCount = 0;
 // ───── TLS Certificates for AWS IoT (PROGMEM) ─────
 static const char ROOT_CA_AWS[] PROGMEM = R"EOF(
 -----BEGIN CERTIFICATE-----
-MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF
-ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6
-b24gUm9vdCBDQSAxMB4XDTE1MDUyNjAwMDAwMFoXDTM4MDExNzAwMDAwMFowOTEL
-MAkGA1UEBhMCVVMxDzANBgNVBAoTBkFtYXpvbjEZMBcGA1UEAxMQQW1hem9uIFJv
-b3QgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALJ4gHHKeNXj
-ca9HgFB0fW7Y14h29Jlo91ghYPl0hAEvrAIthtOgQ3pOsqTQNroBvo3bSMgHFzZM
-9O6II8c+6zf1tRn4SWiw3te5djgdYZ6k/oI2peVKVuRF4fn9tBb6dNqcmzU5L/qw
-IFAGbHrQgLKm+a/sRxmPUDgH3KKHOVj4utWp+UhnMJbulHheb4mjUcAwhmahRWa6
-VOujw5H5SNz/0egwLX0tdHA114gk957EWW67c4cX8jJGKLhD+rcdqsq08p8kDi1L
-93FcXmn/6pUCyziKrlA4b9v7LWIbxcceVOF34GfID5yHI9Y/QCB/IIDEgEw+OyQm
-jgSubJrIqg0CAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMC
-AYYwHQYDVR0OBBYEFIQYzIU07LwMlJQuCFmcx7IQTgoIMA0GCSqGSIb3DQEBCwUA
-A4IBAQCY8jdaQZChGsV2USggNiMOruYou6r4lK5IpDB/G/wkjUu0yKGX9rbxenDI
-U5PMCCjjmCXPI6T53iHTfIUJrU6adTrCC2qJeHZERxhlbI1Bjjt/msv0tadQ1wUs
-N+gDS63pYaACbvXy8MWy7Vu33PqUXHeeE6V/Uq2V8viTO96LXFvKWlJbYK8U90vv
-o/ufQJVtMVT8QtPHRh8jrdkPSHCa2XV4cdFyQzR1bldZwgJcJmApzyMZFo6IQ6XU
-5MsI+yMRQ+hDKXJioaldXgjUkK642M4UwtBV8ob2xJNDd2ZhwLnoQdeXeGADbkpy
-rqXRfboQnoZsG4q5WTP468SQvvG5
+dummy
 -----END CERTIFICATE-----
 )EOF";
 
 static const char DEVICE_CERT_AWS[] PROGMEM = R"KEY(
 -----BEGIN CERTIFICATE-----
-MIIDWTCCAkGgAwIBAgIUe/TcIv9Ah//MyVv8Lh+deHcz7RowDQYJKoZIhvcNAQEL
-BQAwTTFLMEkGA1UECwxCQW1hem9uIFdlYiBTZXJ2aWNlcyBPPUFtYXpvbi5jb20g
-SW5jLiBMPVNlYXR0bGUgU1Q9V2FzaGluZ3RvbiBDPVVTMB4XDTI1MDYwNDA5MzQw
-NloXDTQ5MTIzMTIzNTk1OVowHjEcMBoGA1UEAwwTQVdTIElvVCBDZXJ0aWZpY2F0
-ZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM3zcaKw2mmjQryt0nW8
-dE5C2pV5Yu4FlzazIUHmOHqmh55k6wdC7Pa9qOBO8N7z7vpBcb79wJLoMVq99jYR
-Y5IZnFLbG8gU5Lm+Agkrnqtxgb5zDi7d0tmV3udTvtvMl4kBnpxIwaaaDVxhi2N2
-O3d8ArHFptg4XNjfOMmd9rugpWz9uw/S15BnlOF6BUju9APhwU94aEjswsJ5Hmwk
-K3b5p4ahAgrGpdOBWcMYPthoSLKF94qqsSWDdRmZpXDyC+JYD0C3ldy9G/0TP+iv
-svNNInd/XBC/GXqXLHbUHzjiF8N/IoQtXA3dDVRaNV7mRB19eXlbJ/lqCcmRKvrt
-Us8CAwEAAaNgMF4wHwYDVR0jBBgwFoAUKjyuCpvwuDIBlwsbz3jH/x47EdswHQYD
-VR0OBBYEFCeeSn07X0WkRAs7rfNgIcMwvS2UMAwGA1UdEwEB/wQCMAAwDgYDVR0P
-AQH/BAQDAgeAMA0GCSqGSIb3DQEBCwUAA4IBAQB9//nUXiLz7FEWgu+WmHrSIIi1
-8r4GI12d5o3Z2nOy4k9aQK4A7xrFc/j67vf5NX/hOaiAMd7ykjhRm3vNOAtfhOzN
-zBIWTXCqXZiB6ZhWBM6Eunheqtdx1UmRr4pDM4gVEW50iIs6c2bS39JJkY90A7g8
-64hvsXBDstTfHPCl2KbeJ2ax0ZNxT6CEoGrVz5wWn8rz66bl7p3L49wHLlNaLcaN
-iJAJBZyCZrHScPhVEUm5gWVEAYsYLnK3ZL7h3wmhDPS/zWgofvuydVh4itn9KCVp
-EisIWMS0N4r68T6WSu5XgXtxmLaSEtpqbgM3Xu3xZpUN7/s642OBiezTKj3z
+dummy
 -----END CERTIFICATE-----
 )KEY";
 
 static const char DEVICE_KEY_AWS[] PROGMEM = R"KEY(
 -----BEGIN RSA PRIVATE KEY-----
-MIIEpQIBAAKCAQEAzfNxorDaaaNCvK3Sdbx0TkLalXli7gWXNrMhQeY4eqaHnmTr
-B0Ls9r2o4E7w3vPu+kFxvv3AkugxWr32NhFjkhmcUtsbyBTkub4CCSueq3GBvnMO
-Lt3S2ZXe51O+28yXiQGenEjBppoNXGGLY3Y7d3wCscWm2Dhc2N84yZ32u6ClbP27
-D9LXkGeU4XoFSO70A+HBT3hoSOzCwnkebCQrdvmnhqECCsal04FZwxg+2GhIsoX3
-iqqxJYN1GZmlcPIL4lgPQLeV3L0b/RM/6K+y800id39cEL8ZepcsdtQfOOIXw38i
-hC1cDd0NVFo1XuZEHX15eVsn+WoJyZEq+u1SzwIDAQABAoIBAED4svmzN0QqOAyT
-/Zgc+sgRuSl8oOQcKWcdPbmvalPvI0up5KdmyqDQlm0lGkILzHFwofSx0sXFsIRC
-92B5PeNCZxmQfAQz6zBZrAS+mRDW/ypY27mXS0RPToHF3qkysv+K3kHJhiYL5Xkm
-YLXg/8OjAKqagxclOM1GJoEcb1EjPNgKNRXPit7mGRnCyYDXJ4lM8fFmSzdG1fdn
-pEyTc3T1czTysSpIax0VZjZ12d7fcAXIL54Q5dvpLSnqMCJIcDvTrsXBbpvEM3R2
-z+MoOvwRUsfJhGJ4N3qUtCjTfYAVRtbdEk/2uFEAbMyRP0sfnbMmfu5/wNmv8nhk
-uZj9tBECgYEA8ifznPbzNV85x9Ny1rH//gNjQAxPEdBbNk0iKLDz4HIv6jgBSEPy
-m/05j21xV3NwPe6k4k7pP5QPsd/t9gmBn63zoXK4gC16dBFNLFj1yrzpeNujZWd9
-l+LukwOtaCXGzLrnPX6gPwGijMIlZ4Li4UmW6MtyA5ypwmausgiX/RcCgYEA2bmd
-zCCd81BuhbLPe+h2IbeucgcxJ9hknGp5GdwHca7VJ1rb07etgBrL8N6SjlVWwQoV
-Sxeq9WpJg5FYDktvpgnGLZ9v6xZ0hz+vF0OZfS2IRBL/A99+k00kDV1QQ/N8SHf/
-CQ2ckBflSoLNZyUxTRNFE6UZOtSTQW0fSx+8GwkCgYEAinyerd3tKVDUUptyyaXy
-qOp3EGH5tk5aW6uxJWRNlMa48FInKZTyYpNnH8ePUlwKjOC2G1bVvi6G60sNY+/7
-2b453tMlAOkBZu+eGwalStTPEPdLcurEwOBfYGRx/2XbU6pwJJMOQfpFZAqEKbaI
-2h6j127CPZ6S10KyFc8kXPECgYEAr2dohxEn7uO3hqK9oTdwJE3UjizZHx6oP5NP
-qNOoc5/EPYZnXzO05WWxM4Y8T8rUr4QuD2cr5bcRLpujczC26+8n541xHtXiXyuh
-JX7iYwSRqTYcmMQvNwCIsPOiPHwmfkOeBW8f2L5HjTW/wP8nrs59cgwqPUkQsT72
-XRFd+/ECgYEAt/+2CA4IzSckq0NHGzauOiwRXwl0wA3Em2KR0uI3QMJUQL8YRIWc
-VTteclSFWst1ISwz9IeFbqEc/FEw9jxOTtT7ec+w3q89UQ0xvZxhUohrPQocckjX
-Jk4TgXu5Ia2FTy5bvIlbMVI8+CSXJJPrBTsTy1RGbibabHm6k9xDq6A=
+dummy
 -----END RSA PRIVATE KEY-----
 )KEY";
 
